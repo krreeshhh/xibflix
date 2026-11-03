@@ -1,0 +1,9 @@
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.git
+tests/fixtures/*.mkv
+cache/
+config.env

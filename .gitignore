@@ -1,0 +1,14 @@
+.venv
+log.txt
+config.env
+**/__pycache__/
+*.session
+*.session-journal
+*.session-shm
+*.session-wal
+/.vscode/
+bot/downloads/
+downloads/
+cache/*
+!cache/cache.txt
+tests/fixtures/*.mkv
