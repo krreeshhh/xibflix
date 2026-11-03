@@ -124,3 +124,15 @@ class Database:
     
     async def add_btgfiles(self, data):
         result = self.files.insert_many(data)
+
+    def delete_file(self, chat_id, msg_id=None, hash=None):
+        query = {"chat_id": chat_id}
+        if msg_id:
+            query["msg_id"] = msg_id
+        if hash:
+            query["hash"] = hash
+        try:
+            return self.files.delete_one(query).deleted_count > 0
+        except Exception as e:
+            LOGGER.error(f"delete_file error: {e}")
+            return False
