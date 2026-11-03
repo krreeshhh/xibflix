@@ -111,7 +111,6 @@ async def delete_receive_handler(bot: Client, messages: list[Message]):
                 continue
             if chat_id:
                 db.delete_file(chat_id=chat_id, msg_id=msg_id)
-                db.delete_playlist_file(chat_id=chat_id, file_id=msg_id)
                 rm_cache(chat_id)
                 LOGGER.info(f"Deleted Telegram message {msg_id} in {chat_id} automatically purged from index.")
             else:

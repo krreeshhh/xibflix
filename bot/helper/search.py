@@ -45,7 +45,6 @@ async def search(chat_id, query, page):
 
                 for del_id in deleted_ids:
                     db.delete_file(chat_id=str(chat_id), msg_id=str(del_id))
-                    db.delete_playlist_file(chat_id=str(chat_id), file_id=str(del_id))
                     LOGGER.info(f"Purged deleted file from search index: chat={chat_id}, msg_id={del_id}")
 
                 if deleted_ids:

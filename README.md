@@ -23,7 +23,6 @@
 - Faster Resumeable Download Link ⏩
 - Stream Video Support 📺
 - 25 Website Themes (Bootswatch) 🎨
-- Playlist Creator Support 📀
 - Database Support 💾
 - Cache System 🔄
 
@@ -62,8 +61,8 @@ To run this Surf-TG, you will need to add the following environment variables to
 | `PORT` | Port on which app should listen to, defaults to `8080`. `int`
 | `USERNAME` | default  username is `admin`. `str`
 | `PASSWORD` | default  password is `admin`. `str`
-| `ADMIN_USERNAME` | Set the admin username so that the admin can log in to [Playlist Creator](https://github.com/weebzone/Surf-TG/tree/main#playlist-creator-). Make it different from `USERNAME`. The default admin username is `surfTG`. `str`
-| `ADMIN_PASSWORD` | Set the admin password so that the admin can log in to [Playlist Creator](https://github.com/weebzone/Surf-TG/tree/main#playlist-creator-). Make it different from `PASSWORD`. The default admin password is `surfTG`. `str`
+| `ADMIN_USERNAME` | Set the admin username for system settings and reloads. Make it different from `USERNAME`. The default admin username is `surfTG`. `str`
+| `ADMIN_PASSWORD` | Set the admin password for system settings and reloads. Make it different from `PASSWORD`. The default admin password is `surfTG`. `str`
 | `SLEEP_THRESHOLD` | Set a sleep threshold for flood wait exceptions, defaut is `60`. `int`
 | `WORKERS` | Number of maximum concurrent workers for handling incoming updates, default is `10`. `int`
 | `MULTI_TOKEN*` | Multi bot token for handing incoming updates. (*)asterisk represents any interger starting from 1. `str`
@@ -110,7 +109,7 @@ you may also add as many as bots you want. (max limit is 50)
 
 > [!NOTE]
 > **Why Database is Required** <br><br>
-> In Playlist Creator, the folder and file data are stored. As of now, the session string is not required in Surf-TG, so to store these files, the database is necessary. <br>
+> In Database, channel indexed file data and system configurations are stored. <br>
 
 
 1. Go to `https://mongodb.com/` and sign-up.
@@ -128,20 +127,6 @@ you may also add as many as bots you want. (max limit is 50)
 > **Make Sure that you have to Generate the `Pyrofork Session String`**
 
 To generate the Session String use this [Colab Tool](https://colab.research.google.com/drive/1F3cRAdgvFSenOoVSxJFxP-356pE4sWOL)
-
-
-### ***Playlist Creator*** 📀
-
-> [!NOTE]
-> **Login With `ADMIN_USERNAME` and `ADMIN_PASSWORD`** <br><br>
-
-- 📁 Create Folder/Subfolder
-- ✏️ Edit the Folder Name
-- 🖼️ Edit the Folder Thumbnail
-- 📥 Directly Store File in folder from `AUTH_CHANNEL`
-- 🔍 Search Support of file in Playlist folder (limited to the folder which is open in the browser)
-- ✏️ Edit Filename of File
-- 🖼️ Edit Thumbnail of File
 
 ### Bot Commands
 
@@ -241,14 +226,6 @@ Easily Deploy to Heroku use this [Colab Tool](https://colab.research.google.com/
 #### Question 7: How to change theme and add/remove Channel without restart?
 
 **Answer:** Login with `ADMIN_USERNAME` and `ADMIN_PASSWORD`, then clicking the Edit option in the Homepage navbar from there you can change theme and add/remove channel. Make sure that channel must be seperated by `,`
-
-#### Question 8: Can anyone create or edit folders/files in Playlist Creator?
-
-**Answer:** No, only admins with `ADMIN_USERNAME` and `ADMIN_PASSWORD` can log in to Playlist Creator.
-
-#### Question 9: If i delete the mongoDb database then my playlist also deleted?
-
-**Answer:** Yes, Your all the playlist will be deleted.
 
 #### Question 10: If i delete the file from `AUTH_CHANNEL` still then it will be played in Surf-TG?
 

@@ -76,7 +76,6 @@ async def get_files(chat_id, page=1):
 
                 for del_id in deleted_ids:
                     db.delete_file(chat_id=str(chat_id), msg_id=str(del_id))
-                    db.delete_playlist_file(chat_id=str(chat_id), file_id=str(del_id))
                     LOGGER.info(f"Purged deleted file from index: chat={chat_id}, msg_id={del_id}")
 
                 if deleted_ids:
@@ -106,9 +105,6 @@ async def posts_file(posts, chat_id):
     phtml = """
             <div class="col">
                 <div class="card netflix-shelf-card mb-3">
-                    <input type="checkbox" class="admin-only form-check-input position-absolute top-0 end-0 m-2"
-                        onchange="checkSendButton()" id="selectCheckbox"
-                        data-id="{id}|{hash}|{title}|{size}|{type}|{img}">
                     <a href="/watch/{chat_id}?id={id}&hash={hash}" class="shelf-card-link">
                         <div class="card-poster-wrapper">
                             <img src="https://cdn.jsdelivr.net/gh/weebzone/weebzone/data/Surf-TG/src/loading.gif" class="card-poster-img lzy_img"

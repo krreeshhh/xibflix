@@ -27,7 +27,7 @@ hide_channel = """
                     </style>"""
 
 
-async def render_page(id, secure_hash, is_admin=False, html='', playlist='', database='', route='', redirect_url='', msg='', chat_id=''):
+async def render_page(id, secure_hash, is_admin=False, html='', route='', redirect_url='', msg='', chat_id=''):
     theme = await db.get_variable('theme')
     if theme is None or theme == '':
         theme = Telegram.THEME
@@ -37,16 +37,11 @@ async def render_page(id, secure_hash, is_admin=False, html='', playlist='', dat
             html = (await f.read()).replace("<!-- Error -->", msg or '').replace("<!-- Theme -->", theme.lower()).replace("<!-- RedirectURL -->", redirect_url)
     elif route == 'home':
         async with aiopen(ospath.join(tpath, 'home.html'), 'r') as f:
-            html = (await f.read()).replace("<!-- Print -->", html).replace("<!-- Theme -->", theme.lower()).replace("<!-- Playlist -->", playlist)
+            html = (await f.read()).replace("<!-- Print -->", html).replace("<!-- Theme -->", theme.lower())
             if not is_admin:
                 html += admin_block
                 if Telegram.HIDE_CHANNEL:
                     html += hide_channel
-    elif route == 'playlist':
-        async with aiopen(ospath.join(tpath, 'playlist.html'), 'r') as f:
-            html = (await f.read()).replace("<!-- Theme -->", theme.lower()).replace("<!-- Playlist -->", playlist).replace("<!-- Database -->", database).replace("<!-- Title -->", msg).replace("<!-- Parent_id -->", id)
-            if not is_admin:
-                html += admin_block
     elif route == 'index':
         async with aiopen(ospath.join(tpath, 'index.html'), 'r') as f:
             html = (await f.read()).replace("<!-- Print -->", html).replace("<!-- Theme -->", theme.lower()).replace("<!-- Title -->", msg).replace("<!-- Chat_id -->", chat_id)

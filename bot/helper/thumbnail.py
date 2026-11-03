@@ -21,7 +21,6 @@ async def get_image(chat_id, message_id):
                 from bot.helper.cache import rm_cache
                 db = Database()
                 db.delete_file(chat_id=str(chat_id), msg_id=str(message_id))
-                db.delete_playlist_file(chat_id=str(chat_id), file_id=str(message_id))
                 rm_cache(str(chat_id))
                 return path
             img = await StreamBot.download_media(str(msg.video.thumbs[0].file_id)) if (msg.video and msg.video.thumbs) else path

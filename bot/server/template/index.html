@@ -440,36 +440,6 @@
 </head>
 
 <body>
-    <!-- Send File to Folder Modal -->
-    <div class="admin-only modal fade" id="sendFileModal" aria-labelledby="sendFileModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title font-weight-bold">Add Selected to Playlist</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="/send" method="post" id="sendPopupForm">
-                        <input type="hidden" id="chatId" name="chatId" value="<!-- Chat_id -->">
-                        <input type="hidden" id="selectedIds" name="selectedIds">
-                        <label for="folderSearch">Search Destination Folder:</label>
-                        <input type="text" class="form-control mb-3" id="folderSearch" name="folderSearch" placeholder="Type to filter folders...">
-                        <label for="folderDropdown">Select Folder:</label>
-                        <select class="form-select mb-4" id="folderDropdown"></select>
-                        <input type="hidden" id="folderId" name="folderId">
-
-                        <div class="d-flex justify-content-end gap-2">
-                            <button type="button" class="btn-netflix-header" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn-netflix-red" onclick="submitSendForm()" id="sendButton" disabled>
-                                Confirm & Add
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Navigation -->
     <header class="netflix-navbar">
         <div class="nav-left">
@@ -496,9 +466,6 @@
     <div class="page-header-wrapper">
         <div class="header-row">
             <h1 class="shelf-title"><!-- Title --></h1>
-            <button type="button" class="admin-only btn-netflix-red" data-bs-toggle="modal" data-bs-target="#sendFileModal" onclick="sendPopupForm()">
-                <i class="bi bi-folder-symlink"></i> Add to Collection
-            </button>
         </div>
 
         <form class="search-container" action="/search/<!-- Chat_id -->" method="get">
