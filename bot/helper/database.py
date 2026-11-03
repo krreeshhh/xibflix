@@ -2,6 +2,7 @@ import certifi
 from pymongo import DESCENDING, MongoClient
 from bson import ObjectId
 from bot.config import Telegram
+from bot import LOGGER
 import re
 
 
@@ -125,14 +126,69 @@ class Database:
     async def add_btgfiles(self, data):
         result = self.files.insert_many(data)
 
-    def delete_file(self, chat_id, msg_id=None, hash=None):
-        query = {"chat_id": chat_id}
-        if msg_id:
-            query["msg_id"] = msg_id
-        if hash:
-            query["hash"] = hash
+    def _get_variants(self, val):
+        if val is None:
+            return []
+        s_val = str(val).strip()
+        variants = {s_val}
+        if s_val.startswith("-100"):
+            variants.add(s_val[4:])
+        elif s_val.startswith("-"):
+            variants.add(s_val[1:])
+        else:
+            variants.add(f"-100{s_val}")
+        for v in list(variants):
+            if v.lstrip('-').isdigit():
+                try:
+                    variants.add(int(v))
+                except Exception:
+                    pass
+        return list(variants)
+
+    def delete_file(self, chat_id=None, msg_id=None, hash=None):
+        query = {}
+        if chat_id is not None:
+            query["chat_id"] = {"$in": self._get_variants(chat_id)}
+        if msg_id is not None:
+            s_msg = str(msg_id)
+            query["msg_id"] = {"$in": [s_msg, int(s_msg)] if s_msg.isdigit() else [s_msg]}
+        if hash is not None:
+            query["hash"] = str(hash)
+        if not query:
+            return False
         try:
-            return self.files.delete_one(query).deleted_count > 0
+            res = self.files.delete_many(query)
+            if res.deleted_count > 0:
+                LOGGER.info(f"Deleted {res.deleted_count} file(s) from database index for chat={chat_id}, msg_id={msg_id}")
+            return res.deleted_count > 0
         except Exception as e:
             LOGGER.error(f"delete_file error: {e}")
+            return False
+
+    def delete_file_by_msg_id(self, msg_id):
+        if msg_id is None:
+            return False
+        s_msg = str(msg_id)
+        query = {"msg_id": {"$in": [s_msg, int(s_msg)] if s_msg.isdigit() else [s_msg]}}
+        try:
+            res = self.files.delete_many(query)
+            return res.deleted_count > 0
+        except Exception as e:
+            LOGGER.error(f"delete_file_by_msg_id error: {e}")
+            return False
+
+    def delete_playlist_file(self, chat_id=None, file_id=None):
+        query = {"type": "file"}
+        if chat_id is not None:
+            query["chat_id"] = {"$in": self._get_variants(chat_id)}
+        if file_id is not None:
+            s_id = str(file_id)
+            query["file_id"] = {"$in": [s_id, int(s_id)] if s_id.isdigit() else [s_id]}
+        if len(query) <= 1:
+            return False
+        try:
+            res = self.collection.delete_many(query)
+            return res.deleted_count > 0
+        except Exception as e:
+            LOGGER.error(f"delete_playlist_file error: {e}")
             return False

@@ -4,6 +4,7 @@ from bot.config import Telegram
 from bot.helper.database import Database
 from bot.helper.file_size import get_readable_file_size
 from bot.helper.index import get_messages
+from bot.helper.cache import rm_cache
 from bot.helper.media import is_media
 from bot.telegram import StreamBot
 from pyrogram import filters, Client
@@ -99,3 +100,23 @@ async def file_receive_handler(bot: Client, message: Message):
                                 disable_web_page_preview=True, parse_mode=ParseMode.MARKDOWN)
     else:
         await message.reply(text="Channel is not in AUTH_CHANNEL")
+
+@StreamBot.on_deleted_messages()
+async def delete_receive_handler(bot: Client, messages: list[Message]):
+    for message in messages:
+        try:
+            chat_id = str(message.chat.id) if (message and message.chat) else None
+            msg_id = str(message.id) if message else None
+            if not msg_id:
+                continue
+            if chat_id:
+                db.delete_file(chat_id=chat_id, msg_id=msg_id)
+                db.delete_playlist_file(chat_id=chat_id, file_id=msg_id)
+                rm_cache(chat_id)
+                LOGGER.info(f"Deleted Telegram message {msg_id} in {chat_id} automatically purged from index.")
+            else:
+                db.delete_file_by_msg_id(msg_id)
+                rm_cache()
+                LOGGER.info(f"Deleted Telegram message {msg_id} automatically purged from index.")
+        except Exception as e:
+            LOGGER.error(f"Error handling deleted message: {e}")

@@ -457,6 +457,9 @@ async def api_tracks_handler(request: web.Request):
     except InvalidHash as e:
         raise web.HTTPForbidden(text=e.message) from e
     except FIleNotFound as e:
+        db.delete_file(chat_id=chat_id, msg_id=message_id, hash=secure_hash)
+        db.delete_playlist_file(chat_id=chat_id, file_id=message_id)
+        rm_cache(chat_id)
         raise web.HTTPNotFound(text=e.message) from e
     except web.HTTPException:
         raise
@@ -593,6 +596,9 @@ async def api_subtitles_handler(request: web.Request):
     except InvalidHash as e:
         raise web.HTTPForbidden(text=e.message) from e
     except FIleNotFound as e:
+        db.delete_file(chat_id=chat_id, msg_id=message_id, hash=secure_hash)
+        db.delete_playlist_file(chat_id=chat_id, file_id=message_id)
+        rm_cache(chat_id)
         raise web.HTTPNotFound(text=e.message) from e
     except web.HTTPException:
         raise
@@ -692,6 +698,9 @@ async def api_audio_handler(request: web.Request):
     except InvalidHash as e:
         raise web.HTTPForbidden(text=e.message) from e
     except FIleNotFound as e:
+        db.delete_file(chat_id=chat_id, msg_id=message_id, hash=secure_hash)
+        db.delete_playlist_file(chat_id=chat_id, file_id=message_id)
+        rm_cache(chat_id)
         raise web.HTTPNotFound(text=e.message) from e
     except web.HTTPException:
         raise
@@ -712,9 +721,12 @@ async def stream_handler_watch(request: web.Request):
             return web.Response(text=await render_page(message_id, secure_hash, chat_id=chat_id), content_type='text/html')
         except InvalidHash as e:
             raise web.HTTPForbidden(text=e.message) from e
-        except FIleNotFound as e:
+        except FIleNotFound:
             db.delete_file(chat_id=chat_id, msg_id=message_id, hash=secure_hash)
-            raise web.HTTPNotFound(text=e.message) from e
+            db.delete_playlist_file(chat_id=chat_id, file_id=message_id)
+            rm_cache(chat_id)
+            clean_chat = chat_id.replace("-100", "")
+            return web.HTTPFound(f"/channel/{clean_chat}")
         except (AttributeError, BadStatusLine, ConnectionResetError):
             pass
         except Exception as e:
@@ -740,6 +752,8 @@ async def stream_handler(request: web.Request):
         raise web.HTTPForbidden(text=e.message) from e
     except FIleNotFound as e:
         db.delete_file(chat_id=chat_id, msg_id=message_id, hash=secure_hash)
+        db.delete_playlist_file(chat_id=chat_id, file_id=message_id)
+        rm_cache(chat_id)
         raise web.HTTPNotFound(text=e.message) from e
     except (AttributeError, BadStatusLine, ConnectionResetError):
         pass

@@ -16,8 +16,15 @@ async def get_image(chat_id, message_id):
             img = await StreamBot.download_media(str(chat.photo.big_file_id)) if chat.photo else path
         else:
             msg = await StreamBot.get_messages(int(chat_id), int(message_id))
-            img = await StreamBot.download_media(str(msg.video.thumbs[0].file_id)) if msg.video else path
-
+            if not msg or msg.empty:
+                from bot.helper.database import Database
+                from bot.helper.cache import rm_cache
+                db = Database()
+                db.delete_file(chat_id=str(chat_id), msg_id=str(message_id))
+                db.delete_playlist_file(chat_id=str(chat_id), file_id=str(message_id))
+                rm_cache(str(chat_id))
+                return path
+            img = await StreamBot.download_media(str(msg.video.thumbs[0].file_id)) if (msg.video and msg.video.thumbs) else path
         image_cache[cache_key] = img
         return img
     except Exception as e:
